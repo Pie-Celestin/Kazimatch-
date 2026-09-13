@@ -3,9 +3,17 @@ const supabaseClient = supabase.createClient(
   SUPABASE_KEY
 );
 
+
+// ==========================
+// REGISTER
+// ==========================
+
 const registerForm = document.querySelector("form");
 
-if (registerForm) {
+if (
+  registerForm &&
+  window.location.pathname.endsWith("register.html")
+) {
   registerForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -32,7 +40,7 @@ if (registerForm) {
       return;
     }
 
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { error } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -54,5 +62,41 @@ if (registerForm) {
     );
 
     registerForm.reset();
+  });
+}
+
+
+// ==========================
+// LOGIN
+// ==========================
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const message = document.getElementById("message");
+
+    message.textContent = "Logging in...";
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      message.textContent = error.message;
+      return;
+    }
+
+    message.textContent = "Login successful!";
+
+    setTimeout(function () {
+      window.location.href = "index.html";
+    }, 1000);
   });
 }
