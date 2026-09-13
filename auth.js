@@ -1,4 +1,3 @@
-alert("KaziMatch JavaScript is working!");
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -15,6 +14,7 @@ if (
   registerForm &&
   window.location.pathname.endsWith("register.html")
 ) {
+  alert("Register form found!");
   registerForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
