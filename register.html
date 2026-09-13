@@ -15,34 +15,16 @@
   </header>
 
   <main>
-
     <h2>Register</h2>
 
     <form>
+      <input type="text" placeholder="Full Name" required>
 
-      <input
-        type="text"
-        placeholder="Full Name"
-        required
-      >
+      <input type="email" placeholder="Email Address" required>
 
-      <input
-        type="email"
-        placeholder="Email Address"
-        required
-      >
+      <input type="tel" placeholder="Phone Number" required>
 
-      <input
-        type="tel"
-        placeholder="Phone Number"
-        required
-      >
-
-      <input
-        type="password"
-        placeholder="Password"
-        required
-      >
+      <input type="password" placeholder="Password" required>
 
       <select required>
         <option value="">Select Account Type</option>
@@ -53,19 +35,21 @@
       <br><br>
 
       <button type="submit">Create Account</button>
-
     </form>
 
     <p>
       Already have an account?
       <a href="login.html">Login</a>
     </p>
-
   </main>
 
   <footer>
     <p>© 2026 KaziMatch. All rights reserved.</p>
   </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="auth.js"></script>
 
 </body>
 </html>
