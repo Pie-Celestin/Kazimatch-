@@ -8,62 +8,67 @@ const supabaseClient = supabase.createClient(
 // REGISTER
 // ==========================
 
-const registerForm = document.querySelector("form");
+const registerForm = document.getElementById("registerForm");
 
-if (registerForm && !document.getElementById("loginForm")) {
+if (registerForm) {
 
   registerForm.addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
-    const fullName = registerForm.querySelector(
-      'input[placeholder="Full Name"]'
-    ).value;
+    const message = document.getElementById("registerMessage");
 
-    const email = registerForm.querySelector(
-      'input[type="email"]'
-    ).value;
+    message.textContent = "Creating your KaziMatch account...";
 
-    const phone = registerForm.querySelector(
-      'input[type="tel"]'
-    ).value;
+    const fullName = document.getElementById("fullName").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const password = document.getElementById("password").value;
+    const role = document.getElementById("role").value;
 
-    const password = registerForm.querySelector(
-      'input[type="password"]'
-    ).value;
-
-    const role = registerForm.querySelector("select").value;
 
     if (!role) {
-      alert("Please select your account type.");
+      message.textContent = "Please select your account type.";
       return;
     }
 
-    alert("Creating your KaziMatch account...");
 
-    const { error } = await supabaseClient.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          full_name: fullName,
-          role: role,
-          phone: phone
+    const { data, error } =
+      await supabaseClient.auth.signUp({
+
+        email: email,
+
+        password: password,
+
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone,
+            role: role
+          }
         }
-      }
-    });
+
+      });
+
 
     if (error) {
-      alert(error.message);
+
+      message.textContent =
+        "Registration failed: " + error.message;
+
       return;
     }
 
-    alert(
-      "Account created successfully! Check your email to confirm your account."
-    );
+
+    message.textContent =
+      "Account created successfully! Please check your email to confirm your account.";
 
     registerForm.reset();
+
   });
+
 }
+
 
 
 // ==========================
@@ -75,29 +80,50 @@ const loginForm = document.getElementById("loginForm");
 if (loginForm) {
 
   loginForm.addEventListener("submit", async function (event) {
+
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
     const message = document.getElementById("message");
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
 
     message.textContent = "Logging in...";
 
-    const { error } =
+
+    const { data, error } =
       await supabaseClient.auth.signInWithPassword({
+
         email: email,
+
         password: password
+
       });
 
+
     if (error) {
-      message.textContent = error.message;
+
+      message.textContent =
+        "Login failed: " + error.message;
+
       return;
     }
 
-    message.textContent = "Login successful!";
+
+    message.textContent =
+      "Login successful!";
+
 
     setTimeout(function () {
+
       window.location.href = "index.html";
+
     }, 1000);
+
   });
+
 }
