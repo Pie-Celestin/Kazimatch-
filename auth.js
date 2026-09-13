@@ -1,53 +1,14 @@
-// ==========================
-// KAZIMATCH AUTH SYSTEM
-// ==========================
-
-let supabaseClient = null;
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 
 // ==========================
-// CONNECT TO SUPABASE
+// KAZIMATCH SUPABASE
 // ==========================
 
-try {
-
-  if (
-    typeof SUPABASE_URL === "undefined" ||
-    typeof SUPABASE_KEY === "undefined"
-  ) {
-    throw new Error(
-      "Supabase configuration was not found."
-    );
-  }
-
-  if (
-    !SUPABASE_URL ||
-    !SUPABASE_KEY
-  ) {
-    throw new Error(
-      "Supabase URL or Publishable Key is empty."
-    );
-  }
-
-  supabaseClient = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-} catch (error) {
-
-  console.error(error);
-
-  const registerMessage =
-    document.getElementById("registerMessage");
-
-  if (registerMessage) {
-    registerMessage.textContent =
-      "KaziMatch connection error: " +
-      error.message;
-  }
-}
-
+const supabaseClient = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
 // ==========================
@@ -57,8 +18,7 @@ try {
 const registerForm =
   document.getElementById("registerForm");
 
-
-if (registerForm && supabaseClient) {
+if (registerForm) {
 
   registerForm.addEventListener(
     "submit",
@@ -66,45 +26,27 @@ if (registerForm && supabaseClient) {
 
       event.preventDefault();
 
-
       const message =
-        document.getElementById(
-          "registerMessage"
-        );
-
+        document.getElementById("registerMessage");
 
       message.textContent =
-        "Connecting to KaziMatch...";
+        "Creating your KaziMatch account...";
 
 
       const fullName =
-        document.getElementById(
-          "fullName"
-        ).value.trim();
-
+        document.getElementById("fullName").value.trim();
 
       const email =
-        document.getElementById(
-          "email"
-        ).value.trim();
-
+        document.getElementById("email").value.trim();
 
       const phone =
-        document.getElementById(
-          "phone"
-        ).value.trim();
-
+        document.getElementById("phone").value.trim();
 
       const password =
-        document.getElementById(
-          "password"
-        ).value;
-
+        document.getElementById("password").value;
 
       const role =
-        document.getElementById(
-          "role"
-        ).value;
+        document.getElementById("role").value;
 
 
       if (
@@ -131,13 +73,9 @@ if (registerForm && supabaseClient) {
       }
 
 
-      message.textContent =
-        "Creating your account...";
-
-
       try {
 
-        const result =
+        const { data, error } =
           await supabaseClient.auth.signUp({
 
             email: email,
@@ -161,10 +99,6 @@ if (registerForm && supabaseClient) {
           });
 
 
-        const data = result.data;
-        const error = result.error;
-
-
         if (error) {
 
           message.textContent =
@@ -175,18 +109,17 @@ if (registerForm && supabaseClient) {
         }
 
 
-        if (!data || !data.user) {
+        if (!data.user) {
 
           message.textContent =
-            "Registration did not create a user. Please try again.";
+            "Account was not created.";
 
           return;
         }
 
 
         message.textContent =
-          "Account created successfully! Check your email to verify your account.";
-
+          "Account created successfully! Please check your email to verify your account.";
 
         registerForm.reset();
 
@@ -194,99 +127,7 @@ if (registerForm && supabaseClient) {
       } catch (error) {
 
         message.textContent =
-          "Unexpected error: " +
-          error.message;
-
-      }
-
-    }
-  );
-
-}
-
-
-
-// ==========================
-// LOGIN
-// ==========================
-
-const loginForm =
-  document.getElementById("loginForm");
-
-
-if (loginForm && supabaseClient) {
-
-  loginForm.addEventListener(
-    "submit",
-    async function (event) {
-
-      event.preventDefault();
-
-
-      const message =
-        document.getElementById(
-          "message"
-        );
-
-
-      const email =
-        document.getElementById(
-          "email"
-        ).value.trim();
-
-
-      const password =
-        document.getElementById(
-          "password"
-        ).value;
-
-
-      message.textContent =
-        "Logging in...";
-
-
-      try {
-
-        const result =
-          await supabaseClient.auth.signInWithPassword({
-
-            email: email,
-
-            password: password
-
-          });
-
-
-        const data = result.data;
-        const error = result.error;
-
-
-        if (error) {
-
-          message.textContent =
-            "Login error: " +
-            error.message;
-
-          return;
-        }
-
-
-        message.textContent =
-          "Login successful!";
-
-
-        setTimeout(function () {
-
-          window.location.href =
-            "index.html";
-
-        }, 1000);
-
-
-      } catch (error) {
-
-        message.textContent =
-          "Unexpected error: " +
+          "Connection error: " +
           error.message;
 
       }
