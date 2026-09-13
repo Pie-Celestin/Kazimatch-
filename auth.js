@@ -1,49 +1,119 @@
 // ==========================
-// KAZIMATCH AUTHENTICATION
+// KAZIMATCH AUTH SYSTEM
 // ==========================
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+let supabaseClient = null;
+
+
+// ==========================
+// CONNECT TO SUPABASE
+// ==========================
+
+try {
+
+  if (
+    typeof SUPABASE_URL === "undefined" ||
+    typeof SUPABASE_KEY === "undefined"
+  ) {
+    throw new Error(
+      "Supabase configuration was not found."
+    );
+  }
+
+  if (
+    !SUPABASE_URL ||
+    !SUPABASE_KEY
+  ) {
+    throw new Error(
+      "Supabase URL or Publishable Key is empty."
+    );
+  }
+
+  supabaseClient = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+} catch (error) {
+
+  console.error(error);
+
+  const registerMessage =
+    document.getElementById("registerMessage");
+
+  if (registerMessage) {
+    registerMessage.textContent =
+      "KaziMatch connection error: " +
+      error.message;
+  }
+}
+
 
 
 // ==========================
 // REGISTER
 // ==========================
 
-const registerForm = document.getElementById("registerForm");
-
-if (registerForm) {
-
-  registerForm.addEventListener("submit", async function (event) {
-
-    event.preventDefault();
-
-    const message = document.getElementById("registerMessage");
-
-    message.textContent = "Connecting to KaziMatch...";
+const registerForm =
+  document.getElementById("registerForm");
 
 
-    try {
+if (registerForm && supabaseClient) {
+
+  registerForm.addEventListener(
+    "submit",
+    async function (event) {
+
+      event.preventDefault();
+
+
+      const message =
+        document.getElementById(
+          "registerMessage"
+        );
+
+
+      message.textContent =
+        "Connecting to KaziMatch...";
+
 
       const fullName =
-        document.getElementById("fullName").value.trim();
+        document.getElementById(
+          "fullName"
+        ).value.trim();
+
 
       const email =
-        document.getElementById("email").value.trim();
+        document.getElementById(
+          "email"
+        ).value.trim();
+
 
       const phone =
-        document.getElementById("phone").value.trim();
+        document.getElementById(
+          "phone"
+        ).value.trim();
+
 
       const password =
-        document.getElementById("password").value;
+        document.getElementById(
+          "password"
+        ).value;
+
 
       const role =
-        document.getElementById("role").value;
+        document.getElementById(
+          "role"
+        ).value;
 
 
-      if (!fullName || !email || !phone || !password || !role) {
+      if (
+        !fullName ||
+        !email ||
+        !phone ||
+        !password ||
+        !role
+      ) {
 
         message.textContent =
           "Please complete all fields.";
@@ -62,64 +132,75 @@ if (registerForm) {
 
 
       message.textContent =
-        "Creating your KaziMatch account...";
+        "Creating your account...";
 
 
-      const { data, error } =
-        await supabaseClient.auth.signUp({
+      try {
 
-          email: email,
+        const result =
+          await supabaseClient.auth.signUp({
 
-          password: password,
+            email: email,
 
-          options: {
+            password: password,
 
-            data: {
+            options: {
 
-              full_name: fullName,
+              data: {
 
-              phone: phone,
+                full_name: fullName,
 
-              role: role
+                phone: phone,
+
+                role: role
+
+              }
 
             }
 
-          }
-
-        });
+          });
 
 
-      if (error) {
+        const data = result.data;
+        const error = result.error;
+
+
+        if (error) {
+
+          message.textContent =
+            "Registration error: " +
+            error.message;
+
+          return;
+        }
+
+
+        if (!data || !data.user) {
+
+          message.textContent =
+            "Registration did not create a user. Please try again.";
+
+          return;
+        }
+
 
         message.textContent =
-          "Registration failed: " + error.message;
+          "Account created successfully! Check your email to verify your account.";
 
-        return;
-      }
-
-
-      if (data.user) {
-
-        message.textContent =
-          "Account created successfully! Please check your email to verify your account.";
 
         registerForm.reset();
 
-      } else {
+
+      } catch (error) {
 
         message.textContent =
-          "Registration completed, but no user was returned.";
+          "Unexpected error: " +
+          error.message;
 
       }
 
-    } catch (error) {
-
-      message.textContent =
-        "Unexpected error: " + error.message;
-
     }
-
-  });
+  );
 
 }
 
@@ -133,69 +214,84 @@ const loginForm =
   document.getElementById("loginForm");
 
 
-if (loginForm) {
+if (loginForm && supabaseClient) {
 
-  loginForm.addEventListener("submit", async function (event) {
+  loginForm.addEventListener(
+    "submit",
+    async function (event) {
 
-    event.preventDefault();
-
-
-    const message =
-      document.getElementById("message");
+      event.preventDefault();
 
 
-    const email =
-      document.getElementById("email").value.trim();
+      const message =
+        document.getElementById(
+          "message"
+        );
 
 
-    const password =
-      document.getElementById("password").value;
+      const email =
+        document.getElementById(
+          "email"
+        ).value.trim();
 
 
-    message.textContent =
-      "Logging in...";
+      const password =
+        document.getElementById(
+          "password"
+        ).value;
 
 
-    try {
-
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-
-          email: email,
-
-          password: password
-
-        });
+      message.textContent =
+        "Logging in...";
 
 
-      if (error) {
+      try {
+
+        const result =
+          await supabaseClient.auth.signInWithPassword({
+
+            email: email,
+
+            password: password
+
+          });
+
+
+        const data = result.data;
+        const error = result.error;
+
+
+        if (error) {
+
+          message.textContent =
+            "Login error: " +
+            error.message;
+
+          return;
+        }
+
 
         message.textContent =
-          "Login failed: " + error.message;
+          "Login successful!";
 
-        return;
+
+        setTimeout(function () {
+
+          window.location.href =
+            "index.html";
+
+        }, 1000);
+
+
+      } catch (error) {
+
+        message.textContent =
+          "Unexpected error: " +
+          error.message;
+
       }
 
-
-      message.textContent =
-        "Login successful!";
-
-
-      setTimeout(function () {
-
-        window.location.href =
-          "index.html";
-
-      }, 1000);
-
-
-    } catch (error) {
-
-      message.textContent =
-        "Unexpected error: " + error.message;
-
     }
-
-  });
+  );
 
 }
