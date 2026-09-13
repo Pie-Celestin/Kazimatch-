@@ -10,11 +10,8 @@ const supabaseClient = supabase.createClient(
 
 const registerForm = document.querySelector("form");
 
-if (
-  registerForm &&
-  window.location.pathname.endsWith("register.html")
-) {
-  alert("Register form found!");
+if (registerForm && !document.getElementById("loginForm")) {
+
   registerForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -40,6 +37,8 @@ if (
       alert("Please select your account type.");
       return;
     }
+
+    alert("Creating your KaziMatch account...");
 
     const { error } = await supabaseClient.auth.signUp({
       email: email,
@@ -74,6 +73,7 @@ if (
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
+
   loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -83,7 +83,7 @@ if (loginForm) {
 
     message.textContent = "Logging in...";
 
-    const { data, error } =
+    const { error } =
       await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password
