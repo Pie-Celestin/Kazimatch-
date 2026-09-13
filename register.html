@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@
     <h1>Create Your KaziMatch Account</h1>
     <p>Join KaziMatch and connect with opportunities.</p>
   </header>
+
 
   <main>
 
@@ -52,34 +54,65 @@
       >
 
       <select id="role" required>
-        <option value="">Select Account Type</option>
-        <option value="job_seeker">Job Seeker</option>
-        <option value="employer">Employer</option>
+
+        <option value="">
+          Select Account Type
+        </option>
+
+        <option value="job_seeker">
+          Job Seeker
+        </option>
+
+        <option value="employer">
+          Employer
+        </option>
+
       </select>
 
       <br><br>
 
-      <button type="submit">Create Account</button>
+      <button type="submit">
+        Create Account
+      </button>
 
     </form>
 
+
     <p id="registerMessage"></p>
+
 
     <p>
       Already have an account?
-      <a href="login.html">Login</a>
+      <a href="login.html">
+        Login
+      </a>
     </p>
 
   </main>
 
+
   <footer>
-    <p>© 2026 KaziMatch. All rights reserved.</p>
+
+    <p>
+      © 2026 KaziMatch. All rights reserved.
+    </p>
+
   </footer>
 
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- SUPABASE LIBRARY -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+  </script>
+
+
+  <!-- KAZIMATCH CONFIG -->
   <script src="config.js"></script>
+
+
+  <!-- KAZIMATCH AUTH -->
   <script src="auth.js"></script>
 
 </body>
+
 </html>
