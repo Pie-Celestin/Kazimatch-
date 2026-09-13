@@ -1,8 +1,9 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { createClient } from
+"https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 
 // ==========================
-// KAZIMATCH SUPABASE
+// SUPABASE CONNECTION
 // ==========================
 
 const supabaseClient = createClient(
@@ -18,6 +19,7 @@ const supabaseClient = createClient(
 const registerForm =
   document.getElementById("registerForm");
 
+
 if (registerForm) {
 
   registerForm.addEventListener(
@@ -26,27 +28,45 @@ if (registerForm) {
 
       event.preventDefault();
 
+
       const message =
-        document.getElementById("registerMessage");
+        document.getElementById(
+          "registerMessage"
+        );
+
 
       message.textContent =
         "Creating your KaziMatch account...";
 
 
       const fullName =
-        document.getElementById("fullName").value.trim();
+        document.getElementById(
+          "fullName"
+        ).value.trim();
+
 
       const email =
-        document.getElementById("email").value.trim();
+        document.getElementById(
+          "email"
+        ).value.trim();
+
 
       const phone =
-        document.getElementById("phone").value.trim();
+        document.getElementById(
+          "phone"
+        ).value.trim();
+
 
       const password =
-        document.getElementById("password").value;
+        document.getElementById(
+          "password"
+        ).value;
+
 
       const role =
-        document.getElementById("role").value;
+        document.getElementById(
+          "role"
+        ).value;
 
 
       if (
@@ -120,6 +140,7 @@ if (registerForm) {
 
         message.textContent =
           "Account created successfully! Please check your email to verify your account.";
+
 
         registerForm.reset();
 
