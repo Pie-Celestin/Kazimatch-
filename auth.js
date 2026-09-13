@@ -1,3 +1,4 @@
+alert("KaziMatch JavaScript is working!");
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
