@@ -8,7 +8,9 @@ import { createClient } from
 
 const supabaseClient = createClient(
   SUPABASE_URL,
+https://zfzlocesnzhdcdhbbtht.supabase.co/rest/v1/
   SUPABASE_KEY
+sb_publishable_AfXQlQ1dY4VpiVTGDEj0RA_1c2T9xni
 );
 
 
