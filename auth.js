@@ -3,247 +3,268 @@ import { createClient } from
 
 
 // ==========================================
-// KAZIMATCH - SUPABASE CONNECTION
+// CHECK SUPABASE CONFIG
 // ==========================================
 
-const SUPABASE_URL = https://zfzlocesnzhdcdhbbtht.supabase.co/rest/v1/;
-const SUPABASE_KEY =sb_publishable_AfXQlQ1dY4VpiVTGDEj0RA_1c2T9xni ;
+if (
+  !window.SUPABASE_URL ||
+  !window.SUPABASE_KEY
+) {
+  console.error(
+    "KaziMatch: Supabase configuration is missing."
+  );
+}
+
+
+// ==========================================
+// SUPABASE CONNECTION
+// ==========================================
 
 const supabaseClient = createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+  window.SUPABASE_URL,
+  window.SUPABASE_KEY
 );
 
 
 // ==========================================
-// REGISTER
+// PAGE READY
 // ==========================================
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
 
-  console.log("KaziMatch Auth JS is working");
-
-
-  const registerForm =
-    document.getElementById("registerForm");
-
-
-  if (!registerForm) {
-
-    console.error(
-      "KaziMatch error: registerForm was not found."
+    console.log(
+      "KaziMatch Auth JS loaded successfully."
     );
 
-    return;
-  }
 
-
-  // Find existing message area
-  let message =
-    document.getElementById("registerMessage");
-
-
-  // Create message area if it does not exist
-  if (!message) {
-
-    message =
-      document.createElement("div");
-
-    message.id = "registerMessage";
-
-    message.style.marginTop = "15px";
-
-    message.style.padding = "10px";
-
-    registerForm.appendChild(message);
-  }
-
-
-  // ========================================
-  // SUBMIT
-  // ========================================
-
-  registerForm.addEventListener(
-    "submit",
-    async (event) => {
-
-      event.preventDefault();
-
-      console.log(
-        "KaziMatch: Register button clicked"
+    const registerForm =
+      document.getElementById(
+        "registerForm"
       );
 
 
-      message.textContent =
-        "Creating your KaziMatch account...";
+    const message =
+      document.getElementById(
+        "registerMessage"
+      );
 
 
-      // ======================================
-      // GET FORM VALUES
-      // ======================================
-
-      const fullName =
-        document.getElementById("fullName")
-          ?.value.trim() || "";
+    const registerButton =
+      document.getElementById(
+        "registerButton"
+      );
 
 
-      const email =
-        document.getElementById("email")
-          ?.value.trim() || "";
+    // ======================================
+    // CHECK FORM
+    // ======================================
+
+    if (!registerForm) {
+
+      console.error(
+        "KaziMatch: registerForm not found."
+      );
+
+      return;
+    }
 
 
-      const phone =
-        document.getElementById("phone")
-          ?.value.trim() || "";
+    // ======================================
+    // REGISTER
+    // ======================================
 
+    registerForm.addEventListener(
+      "submit",
+      async (event) => {
 
-      const password =
-        document.getElementById("password")
-          ?.value || "";
+        event.preventDefault();
 
-
-      const role =
-        document.getElementById("role")
-          ?.value || "";
-
-
-      console.log("Register data:", {
-        fullName,
-        email,
-        phone,
-        role
-      });
-
-
-      // ======================================
-      // VALIDATION
-      // ======================================
-
-      if (
-        !fullName ||
-        !email ||
-        !phone ||
-        !password ||
-        !role
-      ) {
 
         message.textContent =
-          "Please complete all fields.";
-
-        return;
-      }
+          "Creating your KaziMatch account...";
 
 
-      if (password.length < 6) {
-
-        message.textContent =
-          "Password must contain at least 6 characters.";
-
-        return;
-      }
+        registerButton.disabled = true;
 
 
-      // ======================================
-      // SUPABASE SIGN UP
-      // ======================================
+        // ==================================
+        // GET VALUES
+        // ==================================
 
-      try {
+        const fullName =
+          document
+            .getElementById("fullName")
+            .value
+            .trim();
 
-        console.log(
-          "Connecting to Supabase..."
-        );
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
 
 
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.signUp({
+        const phone =
+          document
+            .getElementById("phone")
+            .value
+            .trim();
 
-            email: email,
 
-            password: password,
+        const password =
+          document
+            .getElementById("password")
+            .value;
 
-            options: {
 
-              data: {
+        const role =
+          document
+            .getElementById("role")
+            .value;
 
-                full_name: fullName,
 
-                phone: phone,
+        // ==================================
+        // VALIDATION
+        // ==================================
 
-                role: role
+        if (
+          !fullName ||
+          !email ||
+          !phone ||
+          !password ||
+          !role
+        ) {
+
+          message.textContent =
+            "Please complete all fields.";
+
+          registerButton.disabled = false;
+
+          return;
+        }
+
+
+        if (password.length < 6) {
+
+          message.textContent =
+            "Password must contain at least 6 characters.";
+
+          registerButton.disabled = false;
+
+          return;
+        }
+
+
+        // ==================================
+        // SUPABASE SIGN UP
+        // ==================================
+
+        try {
+
+          console.log(
+            "Sending registration to Supabase..."
+          );
+
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth.signUp({
+
+              email: email,
+
+              password: password,
+
+              options: {
+
+                data: {
+
+                  full_name: fullName,
+
+                  phone: phone,
+
+                  role: role
+
+                }
 
               }
 
-            }
-
-          });
+            });
 
 
-        // ====================================
-        // ERROR
-        // ====================================
+          // ================================
+          // SUPABASE ERROR
+          // ================================
 
-        if (error) {
+          if (error) {
+
+            console.error(
+              "Supabase error:",
+              error
+            );
+
+
+            message.textContent =
+              "Registration error: " +
+              error.message;
+
+
+            registerButton.disabled = false;
+
+            return;
+          }
+
+
+          // ================================
+          // SUCCESS
+          // ================================
+
+          if (data && data.user) {
+
+            message.textContent =
+              "Account created successfully! Please check your email to verify your account.";
+
+
+            console.log(
+              "KaziMatch user created:",
+              data.user
+            );
+
+
+            registerForm.reset();
+
+          } else {
+
+            message.textContent =
+              "Registration finished, but no user was returned.";
+
+          }
+
+
+        } catch (error) {
 
           console.error(
-            "Supabase registration error:",
+            "KaziMatch connection error:",
             error
           );
 
+
           message.textContent =
-            "Registration error: " +
+            "Connection error: " +
             error.message;
 
-          return;
         }
 
 
-        // ====================================
-        // SUCCESS
-        // ====================================
+        registerButton.disabled = false;
 
-        if (data && data.user) {
-
-          console.log(
-            "KaziMatch account created:",
-            data.user
-          );
-
-
-          message.textContent =
-            "Account created successfully! Please check your email to verify your account.";
-
-
-          registerForm.reset();
-
-          return;
-        }
-
-
-        // ====================================
-        // NO USER
-        // ====================================
-
-        message.textContent =
-          "Registration completed, but no user was returned. Please check your Supabase settings.";
-
-
-      } catch (error) {
-
-        console.error(
-          "KaziMatch connection error:",
-          error
-        );
-
-
-        message.textContent =
-          "Connection error: " +
-          error.message;
       }
 
-    }
-  );
+    );
 
-});
+  }
+);
